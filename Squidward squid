@@ -1,0 +1,149 @@
+
+import sqlite3
+
+def create_account(username, password):
+    """
+    Creates a new account for a user.
+    :param username: The desired username for the account
+    :param password: The desired password for the account
+    :return: None
+    """
+    conn = sqlite3.connect('squids.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+    conn.commit()
+    conn.close()
+    print(f"Account for {username} created!")
+
+def login(username, password):
+    """
+    Logs a user in to their account.
+    :param username: The username for the account
+    :param password: The password for the account
+    :return: None
+    """
+    conn = sqlite3.connect('squids.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+    account = c.fetchone()
+    conn.close()
+    if account:
+        print(f"Welcome, {username}!")
+    else:
+        print("Invalid username or password.")
+
+def join_ride(username, ride_id):
+    """
+    Allows a user to join a ride.
+    :param username: The username of the user joining the ride
+    :param ride_id: The ID of the ride being joined
+    :return: None
+    """
+    conn = sqlite3.connect('squids.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO rides (username, ride_id) VALUES (?, ?)", (username, ride_id))
+    conn.commit()
+    conn.close()
+    print(f"{username} has joined ride {ride_id}.")
+
+def view_rides(username):
+    """
+    Allows a user to view their ride history.
+    :param username: The username of the user
+    :return: None
+    """
+    conn = sqlite3.connect('squids.db')
+    c = conn.cursor()
+    c.execute("SELECT ride_id FROM rides WHERE username = ?", (username,))
+    rides = c.fetchall()
+    conn.close()
+    if rides:
+        print(f"{username}'s ride history:")
+        for ride in rides:
+            print(f"Ride {ride[0]}")
+    else:
+        print(f"{username} has no ride history.")
+It's worth noting that this sample code is written in python and uses SQLite to store the data, you can use other languages and databases as well based on your preference and the scope of the a
+import datetime
+
+def create_ride(ride_name, ride_location, ride_date):
+    """
+    Creates a new ride for users to join.
+    :param ride_name: The name of the ride
+    :param ride_location: The location of the ride
+    :param ride_date: The date of the ride (in the format YYYY-MM-DD)
+    :return: None
+    """
+    conn = sqlite3.connect('squids.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO rides (ride_name, ride_location, ride_date) VALUES (?, ?, ?)", (ride_name, ride_location, ride_date))
+    conn.commit()
+    conn.close()
+    print(f"Ride '{ride_name}' at {ride_location} on {ride_date} created!")
+
+def view_upcoming_rides():
+    """
+    Allows a user to view upcoming rides.
+    :return: None
+    """
+    conn = sqlite3.connect('squids.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM rides WHERE ride_date >= ?", (datetime.date.today(),))
+    rides = c.fetchall()
+    conn.close()
+    if rides:
+        print("Upcoming rides:")
+        for ride in rides:
+            print(f"{ride[1]} at {ride[2]} on {ride[3]}")
+    else:
+        print("No upcoming rides.")
+
+def view_past_rides():
+    """
+    Allows a user to view past rides.
+    :return: None
+    """
+    conn = sqlite3.connect('squids.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM rides WHERE ride_date < ?", (datetime.date.today(),))
+    rides = c.fetchall()
+    conn.close()
+    if rides:
+        print("Past rides:")
+        for ride in rides:
+            print(f"{ride[1]} at {ride[2]
+def main_menu():
+    """
+    Displays the main menu of the Squids app and allows the user to navigate to different sections of the app.
+    :return: None
+    """
+    while True:
+        print("Squids App")
+        print("1. Create account")
+        print("2. Log in")
+        print("3. View upcoming rides")
+        print("4. View past rides")
+        print("5. Exit")
+        choice = input("Enter your choice: ")
+        
+        if choice == "1":
+            # Create account
+            username = input("Enter desired username: ")
+            password = input("Enter desired password: ")
+            create_account(username, password)
+        elif choice == "2":
+            # Log in
+            username = input("Enter username: ")
+            password = input("Enter password: ")
+            login(username, password)
+        elif choice == "3":
+            # View upcoming rides
+            view_upcoming_rides()
+        elif choice == "4":
+            # View past rides
+            view_past_rides()
+        elif choice == "5":
+            # Exit
+            break
+        else:
+            print("Invalid choice. Please try again.")
